@@ -1,0 +1,13 @@
+{
+  "name": "MoePus VPM Repository",
+  "id": "com.moepus.vpm",
+  "url": "https://moepus.github.io/vpm/index.json",
+  "author": {
+    "name": "MoePus",
+    "url": "https://github.com/MoePus"
+  },
+  "description": "VRChat Creator Companion (VCC) & ALCOM package listing by MoePus.",
+  "githubRepos": [
+    "MoePus/DXCB5"
+  ]
+}

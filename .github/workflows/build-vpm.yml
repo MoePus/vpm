@@ -1,0 +1,47 @@
+name: Build and Deploy VPM Listing
+
+on:
+  push:
+    branches: [ main ]
+  schedule:
+    # 09:00 JST (UTC 00:00) daily (1 hour after DXCB5 08:00 JST scheduled release) + every 6 hours
+    - cron: '0 */6 * * *'
+  repository_dispatch:
+    types: [ refresh-vpm ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Build VPM index.json and index.html
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python3 scripts/build_listing.py
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: public
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
